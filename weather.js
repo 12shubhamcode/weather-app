@@ -6,6 +6,7 @@ const searchBox = document.querySelector(".search input");
 const searchBtn = document.querySelector(".search button");
 const weatherIcon = document.querySelector(".weather-icon");
 const weather = document.querySelector(".weather");
+const descriptionText = document.querySelector(".description"); // Added line
 
 const checkWeather = async (city) => {
   const response = await fetch(API_URL + city + `&appid=${API_KEY}`);
@@ -15,6 +16,7 @@ const checkWeather = async (city) => {
     document.querySelector(".weather").style.display = "none";
   } else {
     let data = await response.json();
+    console.log(data);
 
     document.querySelector(".city").innerHTML = data.name;
     document.querySelector(".temp").innerHTML = `${Math.round(
@@ -23,6 +25,7 @@ const checkWeather = async (city) => {
     document.querySelector(".humidity").innerHTML = `${data.main.humidity}%`;
     document.querySelector(".wind").innerHTML = `${data.wind.speed}km/h`;
 
+    // Set weather icon
     if (data.weather[0].main === "Clouds") {
       weatherIcon.src = "image/cloud.png";
     } else if (data.weather[0].main === "Clear") {
@@ -34,14 +37,23 @@ const checkWeather = async (city) => {
     } else if (data.weather[0].main === "Haze") {
       weatherIcon.src = "image/haze.png";
     }
+
+    // 🌤️ Add weather description
+    const description = data.weather[0].description;
+    descriptionText.innerHTML = description.charAt(0).toUpperCase() + description.slice(1);
+
+    // Show weather
     weather.style.display = "block";
     document.querySelector(".status-message").style.display = "none";
   }
 };
 
+// Search button click
 searchBtn.addEventListener("click", function () {
   checkWeather(searchBox.value);
 });
+
+// Enter key press
 searchBox.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     checkWeather(searchBox.value);
